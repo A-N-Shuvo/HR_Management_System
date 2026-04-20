@@ -1,0 +1,214 @@
+﻿@{
+    ViewData["Title"] = "Advanced Reports Portal";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title"><i class="fas fa-file-pdf"></i> Advanced Reports Portal</h3>
+        </div>
+        <div class="card-body">
+            
+            <div class="row border-bottom pb-4 mb-4">
+                <div class="col-md-6">
+                    <h5 class="text-primary"><i class="fas fa-users"></i> 1. Employee List Report</h5>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="small text-muted">Select Department</label>
+                            <select id="employeeDept" class="form-control">
+                                <option value="">All Departments</option>
+                                @if (ViewBag.Departments != null)
+                                {
+                                    foreach (var dept in ViewBag.Departments)
+                                    {
+                                        <option value="@dept.DeptId">@dept.DeptName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button onclick="printEmployeeList()" class="btn btn-success w-100">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 border-left">
+                    <h5 class="text-primary"><i class="fas fa-calendar-check"></i> 2. Attendance List Report</h5>
+                    <div class="row">
+                        <div class="col-md-12 mb-2">
+                            <select id="attnDept" class="form-control">
+                                <option value="">All Departments</option>
+                                @if (ViewBag.Departments != null)
+                                {
+                                    foreach (var dept in ViewBag.Departments)
+                                    {
+                                        <option value="@dept.DeptId">@dept.DeptName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="date" id="attnFromDate" class="form-control" title="From Date" />
+                        </div>
+                        <div class="col-md-4">
+                            <input type="date" id="attnToDate" class="form-control" title="To Date" />
+                        </div>
+                        <div class="col-md-4">
+                            <div class="btn-group w-100">
+                                <button onclick="loadAttendanceList()" class="btn btn-primary btn-sm">Preview</button>
+                                <button onclick="printAttendance()" class="btn btn-warning btn-sm text-white">Print</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="text-primary"><i class="fas fa-file-invoice-dollar"></i> 3. Detailed Salary List</h5>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <select id="salDeptId" class="form-control mb-2">
+                                <option value="">All Departments</option>
+                                @if (ViewBag.Departments != null)
+                                {
+                                    foreach (var dept in ViewBag.Departments)
+                                    {
+                                        <option value="@dept.DeptId">@dept.DeptName</option>
+                                    }
+                                }
+                            </select>
+
+                            <select id="salMonth" class="form-control">
+                                @for (int i = 1; i <= 12; i++)
+                                {
+                                    var isSelected = (i == DateTime.Now.Month);
+                                    // সংশোধিত কন্ডিশনাল অ্যাট্রিবিউট
+                                    <option value="@i" selected="@(isSelected ? "selected" : null)">
+                                        @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button onclick="printSalaryList()" class="btn btn-info text-white w-100">
+                                <i class="fas fa-file-pdf"></i> Detailed PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6 border-left">
+                    <h5 class="text-primary"><i class="fas fa-chart-pie"></i> 4. Salary Summary Report</h5>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <select id="summaryDeptId" class="form-control mb-2">
+                                <option value="">All Departments</option>
+                                @if (ViewBag.Departments != null)
+                                {
+                                    foreach (var dept in ViewBag.Departments)
+                                    {
+                                        <option value="@dept.DeptId">@dept.DeptName</option>
+                                    }
+                                }
+                            </select>
+
+                            <select id="summaryMonth" class="form-control">
+                                @for (int i = 1; i <= 12; i++)
+                                {
+                                    var isSelected = (i == DateTime.Now.Month);
+                                    <option value="@i" selected="@(isSelected ? "selected" : null)">
+                                        @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button onclick="printSalarySummary()" class="btn btn-dark w-100">
+                                <i class="fas fa-list"></i> Summary PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="attnPreviewSection" class="mt-4" style="display:none;">
+                <h6 class="text-secondary border-bottom pb-2">Attendance Preview</h6>
+                <table class="table table-sm table-hover table-bordered shadow-sm">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Employee Name</th>
+                            <th class="text-center">Present</th>
+                            <th class="text-center">Absent</th>
+                            <th class="text-center">Late</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attnListBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function printEmployeeList() {
+            var deptId = $('#employeeDept').val();
+            window.open(`/Report/PrintEmployeeList?deptId=${deptId}`, '_blank');
+        }
+
+        function loadAttendanceList() {
+            var deptId = $('#attnDept').val();
+            var fromDate = $('#attnFromDate').val();
+            var toDate = $('#attnToDate').val();
+            if(!fromDate || !toDate) { alert("Please select date range!"); return; }
+
+            $.get(`/Report/GetAttendanceData?deptId=${deptId}&fromDate=${fromDate}&toDate=${toDate}`, function(res) {
+                var rows = '';
+                $.each(res.data, function(i, item) {
+                    rows += `<tr>
+                        <td>${item.empName}</td>
+                        <td class="text-center"><span class="badge badge-success">${item.totalPresent}</span></td>
+                        <td class="text-center"><span class="badge badge-danger">${item.totalAbsent}</span></td>
+                        <td class="text-center"><span class="badge badge-warning text-dark">${item.totalLate}</span></td>
+                    </tr>`;
+                });
+                $('#attnListBody').html(rows);
+                $('#attnPreviewSection').fadeIn();
+            });
+        }
+
+        function printAttendance() {
+            var deptId = $('#attnDept').val();
+            var from = $('#attnFromDate').val();
+            var to = $('#attnToDate').val();
+            if(!from || !to) return alert("Select dates");
+            window.open(`/Report/PrintAttendance?deptId=${deptId}&fromDate=${from}&toDate=${to}`, '_blank');
+        }
+
+        function printSalaryList() {
+            var month = $('#salMonth').val();
+            var deptId = $('#salDeptId').val();
+            var year = new Date().getFullYear();
+            window.open(`/Report/PrintSalaryList?month=${month}&year=${year}&deptId=${deptId}`, '_blank');
+        }
+
+        function printSalarySummary() {
+            // ৪ নম্বর সেকশনের আইডিগুলো ব্যবহার করা হয়েছে
+            var month = $('#summaryMonth').val();
+            var deptId = $('#summaryDeptId').val();
+            var year = new Date().getFullYear(); // বর্তমান বছর
+
+            if(!month) {
+                alert("Please select a month");
+                return;
+            }
+
+            window.open(`/Report/PrintSalarySummary?month=${month}&year=${year}&deptId=${deptId}`, '_blank');
+        }
+    </script>
+}

@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Shift Setup";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between">
+            <h4>Shift List</h4>
+            <button class="btn btn-light btn-sm" onclick="resetShiftForm()" data-bs-toggle="modal" data-bs-target="#shiftModal">Add New Shift</button>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered" id="shiftTable">
+                <thead>
+                    <tr>
+                        <th>Shift Name</th>
+                        <th>In Time</th>
+                        <th>Out Time</th>
+                        <th>Late Buffer</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="shiftTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="shiftModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Shift Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="shiftForm">
+                    <input type="hidden" id="shifid" />
+                    <div class="mb-2">
+                        <label>Shift Name</label>
+                        <input type="text" id="shiftName" class="form-control" placeholder="e.g. Day Shift" required />
+                    </div>
+                    <div class="mb-2">
+                        <label>In Time</label>
+                        <input type="time" id="inTime" class="form-control" required />
+                    </div>
+                    <div class="mb-2">
+                        <label>Out Time</label>
+                        <input type="time" id="outTime" class="form-control" required />
+                    </div>
+                    <div class="mb-2">
+                        <label>Late Time (Buffer)</label>
+                        <input type="time" id="lateTime" class="form-control" required />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="saveShift()">Save Shift</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/shift.js"></script>
+}

@@ -1,0 +1,72 @@
+﻿@{
+    ViewData["Title"] = "Company Management";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4>Company List</h4>
+            <button class="btn btn-primary" onclick="resetForm()" data-bs-toggle="modal" data-bs-target="#companyModal">Add New Company</button>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped" id="companyTable">
+                <thead>
+                    <tr>
+                        <th>Company Name</th>
+                        <th>Basic (%)</th>
+                        <th>House Rent (%)</th>
+                        <th>Medical (%)</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="companyTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="companyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Add Company</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="companyForm">
+                    <input type="hidden" id="comId" />
+                    <div class="mb-3">
+                        <label class="form-label">Company Name</label>
+                        <input type="text" id="comName" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Basic Salary Percentage (e.g., 0.5)</label>
+                        <input type="number" step="0.01" id="basic" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">House Rent Percentage (e.g., 0.3)</label>
+                        <input type="number" step="0.01" id="hrent" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Medical Percentage (e.g., 0.15)</label>
+                        <input type="number" step="0.01" id="medical" class="form-control" required />
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-label" type="checkbox" id="isInactive">
+                        <label class="form-check-label">Is Inactive</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="saveCompany()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/company.js"></script>
+}

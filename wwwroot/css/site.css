@@ -1,0 +1,41 @@
+/* --- Custom Navbar Styling (Ocean Blue Theme) --- */
+
+/* ১. HRMS Home (Brand) - সবচাইতে বেশি বোল্ড এবং ওশেন ব্লু */
+.navbar-brand {
+    color: #0077be !important;
+    font-weight: 900 !important; /* Extra Bold */
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+
+    .navbar-brand:hover {
+        color: #005a91 !important; /* সামান্য ডার্ক ব্লু */
+    }
+
+/* ২. নেভিগেশন লিঙ্কগুলোর কালার ওশেন ব্লু */
+.navbar-nav .nav-link {
+    color: #0077be !important;
+    font-weight: 500; /* নরমাল অবস্থায় মিডিয়াম বোল্ড */
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease-in-out;
+}
+
+    /* ৩. হোভার ইফেক্ট - সামান্য বোল্ড এবং টেক্সট এনলার্জ */
+    .navbar-nav .nav-link:hover {
+        color: #004d7c !important; /* হোভার করলে আরও গাঢ় নীল */
+        font-weight: 700; /* হোভার করলে বোল্ড হবে */
+        background-color: rgba(0, 119, 190, 0.05); /* হালকা ওশেন ব্লু ব্যাকগ্রাউন্ড আভা */
+        border-radius: 4px;
+    }
+
+    /* ৪. আপনার দেওয়া ফোকাস স্টাইলের সাথে সামঞ্জস্য রেখে নেভ-লিঙ্ক ফোকাস */
+    .navbar-nav .nav-link:focus {
+        box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #0077be;
+        border-radius: 4px;
+    }
+
+    /* ৫. বর্তমানে যে পেজে আছেন (Active Link) সেটিকে বোল্ড রাখা */
+    .navbar-nav .nav-link.active {
+        font-weight: 800;
+        color: #004d7c !important;
+    }

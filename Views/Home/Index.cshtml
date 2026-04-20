@@ -1,0 +1,629 @@
+﻿@* @{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-xl-12">
+            <div class="card border-0 shadow-sm bg-primary text-white overflow-hidden" style="border-radius: 15px;">
+                <div class="card-body p-4 position-relative">
+                    <div class="row align-items-center">
+                        <div class="col-md-7">
+                            <h2 class="fw-bold mb-1">Welcome Back!</h2>
+                            <p class="opacity-75 mb-4">Please select a company to manage your HR activities.</p>
+
+                            <div class="d-flex gap-2 bg-white p-2 rounded-3 shadow-sm" style="max-width: 500px;">
+                                <select id="comId" class="form-select border-0 shadow-none text-dark fw-semibold" style="cursor: pointer;">
+                                    <option value="">-- Choose Company --</option>
+                                </select>
+                                <button onclick="setCompany()" class="btn btn-dark px-4 rounded-2 fw-bold transition-all">
+                                    Continue <i class="bi bi-arrow-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-5 d-none d-md-block text-end">
+                            <i class="bi bi-buildings" style="font-size: 8rem; opacity: 0.2;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="moduleSection" class="row g-4" style="display:none;">
+        <div class="col-12 mb-2">
+            <h4 class="fw-bold text-secondary text-uppercase small">Management Modules</h4>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a href="@Url.Action("Index", "Shift")" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm module-card p-3 border-top border-primary border-4 shadow-blue">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-soft-primary text-primary rounded-3 p-3 me-3">
+                            <span class="fs-3 emoji-fix">🕒</span>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">Shift Setup</h6>
+                            <small class="text-muted">Manage working hours</small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a href="@Url.Action("Index", "Department")" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm module-card p-3 border-top border-success border-4 shadow-green">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-soft-success text-success rounded-3 p-3 me-3">
+                            <span class="fs-3 emoji-fix">📂</span>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">Departments</h6>
+                            <small class="text-muted">Org structure setup</small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a href="@Url.Action("Index", "Designation")" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm module-card p-3 border-top border-warning border-4 shadow-yellow">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-soft-warning text-warning rounded-3 p-3 me-3">
+                            <span class="fs-3 emoji-fix">🎖️</span>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">Designations</h6>
+                            <small class="text-muted">Employee job roles</small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a href="@Url.Action("Index", "Employee")" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm module-card p-3 border-top border-info border-4 shadow-cyan">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-soft-info text-info rounded-3 p-3 me-3">
+                            <span class="fs-3 emoji-fix">👨‍💼</span>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">Employee Reg.</h6>
+                            <small class="text-muted">Manage staff records</small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-sm module-card p-3 border-top border-primary border-4 shadow-green">
+                <div class="d-flex align-items-start">
+                    <div class="icon-box bg-soft-primary text-primary rounded-3 p-3 me-3">
+                        <span class="fs-3 emoji-fix">📅</span>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-2 fw-bold text-dark">Attendance</h6>
+                        <div class="d-grid gap-2">
+                            <a href="@Url.Action("Index", "Attendance")" class="btn btn-sm btn-outline-primary fw-bold py-1 btn-hover-effect" style="font-size: 0.75rem;">
+                                <i class="bi bi-pencil-square me-1"></i> Daily Entry
+                            </a>
+
+                            <a href="@Url.Action("Index", "AttendanceSummary")" class="btn btn-sm btn-outline-primary fw-bold py-1 btn-hover-effect" style="font-size: 0.75rem;">
+                                <i class="bi bi-pencil-square me-1"></i> Summary
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a href="@Url.Action("Index", "Salary")" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm module-card p-3 border-top border-danger border-4 shadow-red">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-soft-danger text-danger rounded-3 p-3 me-3">
+                            <span class="fs-3 emoji-fix">💰</span>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">Salary/Payroll</h6>
+                            <small class="text-muted">Process payments</small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-12 col-lg-6">
+            <a href="@Url.Action("Index", "Report")" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm module-card p-3 bg-dark text-white shadow-dark">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <div class="icon-box bg-primary text-white rounded-3 p-3 me-3">
+                            <span class="fs-3 emoji-fix">📊</span>
+                        </div>
+                        <div class="text-center">
+                            <h5 class="mb-0 fw-bold">Advanced Reports Portal</h5>
+                            <small class="opacity-75">Click to export PDF/Excel</small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div id="noCompanyMessage" class="text-center py-5">
+        <img src="https://illustrations.popsy.co/gray/work-from-home.svg" style="height: 150px;" alt="Select Company" />
+        <p class="text-muted mt-3">Please select a company to unlock these modules.</p>
+    </div>
+</div>
+
+<style>
+    .bg-soft-primary {
+        background-color: #e7f1ff;
+    }
+
+    .bg-soft-success {
+        background-color: #e6fcf5;
+    }
+
+    .bg-soft-warning {
+        background-color: #fff9db;
+    }
+
+    .bg-soft-danger {
+        background-color: #fff5f5;
+    }
+
+    .bg-soft-info {
+        background-color: #e0f7fa;
+    }
+
+    /* Emoji Fix */
+    .emoji-fix {
+        font-style: normal !important;
+        display: inline-block;
+    }
+
+    /* Custom Shadow Effects */
+    .shadow-blue {
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.15) !important;
+    }
+
+    .shadow-green {
+        box-shadow: 0 4px 12px rgba(25, 135, 84, 0.15) !important;
+    }
+
+    .shadow-yellow {
+        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.15) !important;
+    }
+
+    .shadow-cyan {
+        box-shadow: 0 4px 12px rgba(13, 202, 240, 0.15) !important;
+    }
+
+    .shadow-red {
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15) !important;
+    }
+
+    .shadow-dark {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+    }
+
+    .module-card {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+    }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            background-color: #f8f9fa;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+
+    .icon-box {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            loadCompanies();
+            checkCookie();
+        });
+
+        function loadCompanies() {
+            $.get('/Home/GetCompanies', function (res) {
+                let options = '<option value="">-- Choose Company --</option>';
+                var data = res.data ? res.data : res;
+                data.forEach(c => {
+                    options += `<option value="${c.comId}">${c.comName}</option>`;
+                });
+                $('#comId').html(options);
+                const savedId = getCookie("SelectedCompany");
+                if(savedId) $('#comId').val(savedId);
+            });
+        }
+
+        function setCompany() {
+            const id = $('#comId').val();
+            if (!id) {
+                alert("Please select a company!");
+                return;
+            }
+            document.cookie = "SelectedCompany=" + id + ";path=/;max-age=" + (24*60*60);
+            location.reload();
+        }
+
+        function checkCookie() {
+            const selectedCompany = getCookie("SelectedCompany");
+            if (selectedCompany && selectedCompany !== "") {
+                $('#moduleSection').fadeIn();
+                $('#noCompanyMessage').hide();
+            } else {
+                $('#moduleSection').hide();
+                $('#noCompanyMessage').show();
+            }
+        }
+
+        function getCookie(name) {
+            let value = "; " + document.cookie;
+            let parts = value.split("; " + name + "=");
+            if (parts.length == 2) return parts.pop().split(";").shift();
+        }
+    </script>
+} *@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-xl-12">
+            <div class="card border-0 shadow-sm bg-primary text-white overflow-hidden" style="border-radius: 15px;">
+                <div class="card-body p-4 position-relative">
+                    <div class="row align-items-center">
+                        <div class="col-md-7">
+                            <h2 class="fw-bold mb-1">Welcome Back!</h2>
+                            <p class="opacity-75 mb-4">Please select a company to manage your HR activities.</p>
+
+                            <div class="d-flex gap-2 bg-white p-2 rounded-3 shadow-sm" style="max-width: 500px;">
+                                <select id="comId" class="form-select border-0 shadow-none text-dark fw-semibold" style="cursor: pointer;">
+                                    <option value="">-- Choose Company --</option>
+                                </select>
+                                <button onclick="setCompany()" class="btn btn-dark px-4 rounded-2 fw-bold transition-all">
+                                    Continue <i class="bi bi-arrow-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-5 d-none d-md-block text-end">
+                            <i class="bi bi-buildings" style="font-size: 8rem; opacity: 0.2;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="moduleSection" class="row g-4" style="display:none;">
+        <div class="col-12 mb-2">
+            <h4 class="fw-bold text-secondary text-uppercase small">Management Modules</h4>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a href="@Url.Action("Index", "Shift")" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm module-card p-3 border-top border-primary border-4 shadow-blue">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-soft-primary text-primary rounded-3 p-3 me-3">
+                            <span class="fs-3 emoji-fix">🕒</span>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">Shift Setup</h6>
+                            <small class="text-muted">Manage working hours</small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a href="@Url.Action("Index", "Department")" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm module-card p-3 border-top border-success border-4 shadow-green">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-soft-success text-success rounded-3 p-3 me-3">
+                            <span class="fs-3 emoji-fix">📂</span>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">Departments</h6>
+                            <small class="text-muted">Org structure setup</small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a href="@Url.Action("Index", "Designation")" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm module-card p-3 border-top border-warning border-4 shadow-yellow">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-soft-warning text-warning rounded-3 p-3 me-3">
+                            <span class="fs-3 emoji-fix">🎖️</span>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">Designations</h6>
+                            <small class="text-muted">Employee job roles</small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a href="@Url.Action("Index", "Employee")" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm module-card p-3 border-top border-info border-4 shadow-cyan">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-soft-info text-info rounded-3 p-3 me-3">
+                            <span class="fs-3 emoji-fix">👨‍💼</span>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">Employee Reg.</h6>
+                            <small class="text-muted">Manage staff records</small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-sm module-card p-3 border-top border-maroon border-4 shadow-maroon">
+                <div class="d-flex align-items-start">
+                    <div class="icon-box bg-soft-maroon text-maroon rounded-3 p-3 me-3">
+                        <span class="fs-3 emoji-fix">📅</span>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-2 fw-bold text-dark">Attendance</h6>
+                        <div class="d-grid gap-2">
+                            <a href="@Url.Action("Index", "Attendance")" class="btn btn-sm btn-outline-maroon fw-bold py-1 btn-hover-effect" style="font-size: 0.75rem;">
+                                <i class="bi bi-pencil-square me-1"></i> Daily Entry
+                            </a>
+                            <a href="@Url.Action("Index", "AttendanceSummary")" class="btn btn-sm btn-maroon-solid text-white fw-bold py-1 btn-hover-effect" style="font-size: 0.75rem;">
+                                <i class="bi bi-calculator me-1"></i> Summary
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a href="@Url.Action("Index", "Salary")" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm module-card p-3 border-top border-danger border-4 shadow-red">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-soft-danger text-danger rounded-3 p-3 me-3">
+                            <span class="fs-3 emoji-fix">💰</span>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">Salary/Payroll</h6>
+                            <small class="text-muted">Process payments</small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-12 col-lg-6">
+            <a href="@Url.Action("Index", "Report")" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm module-card p-3 bg-dark text-white shadow-sm">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <div class="icon-box bg-primary text-white rounded-3 p-3 me-3">
+                            <span class="fs-3 emoji-fix">📊</span>
+                        </div>
+                        <div class="text-center">
+                            <h5 class="mb-0 fw-bold">Advanced Reports Portal</h5>
+                            <small class="opacity-75">Click to export PDF/Excel</small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div id="noCompanyMessage" class="text-center py-5">
+        <img src="https://illustrations.popsy.co/gray/work-from-home.svg" style="height: 150px;" alt="Select Company" />
+        <p class="text-muted mt-3">Please select a company to unlock these modules.</p>
+    </div>
+</div>
+
+<style>
+    /* Color Backgrounds */
+    .bg-soft-primary {
+        background-color: #e7f1ff;
+    }
+
+    .bg-soft-success {
+        background-color: #e6fcf5;
+    }
+
+    .bg-soft-warning {
+        background-color: #fff9db;
+    }
+
+    .bg-soft-danger {
+        background-color: #fff5f5;
+    }
+
+    .bg-soft-info {
+        background-color: #e0f7fa;
+    }
+
+    .bg-soft-maroon {
+        background-color: #f8d7da;
+    }
+
+    /* Text & Border Colors */
+    .text-maroon {
+        color: #800000 !important;
+    }
+
+    .border-maroon {
+        border-color: #800000 !important;
+    }
+
+    /* Custom Shadow Effects (Dynamic for each card) */
+    .shadow-blue {
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2) !important;
+    }
+
+    .shadow-green {
+        box-shadow: 0 4px 12px rgba(25, 135, 84, 0.2) !important;
+    }
+
+    .shadow-yellow {
+        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2) !important;
+    }
+
+    .shadow-cyan {
+        box-shadow: 0 4px 12px rgba(13, 202, 240, 0.2) !important;
+    }
+
+    .shadow-red {
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2) !important;
+    }
+
+    .shadow-maroon {
+        box-shadow: 0 4px 12px rgba(128, 0, 0, 0.2) !important;
+    }
+
+    .shadow-dark {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* Buttons for Maroon Theme */
+    .btn-outline-maroon {
+        color: #800000;
+        border: 1px solid #800000;
+        transition: 0.3s;
+    }
+
+        .btn-outline-maroon:hover {
+            background-color: #800000;
+            color: white;
+        }
+
+    .btn-maroon-solid {
+        background-color: #a52a2a;
+        border: none;
+        transition: 0.3s;
+    }
+
+        .btn-maroon-solid:hover {
+            background-color: #800000;
+            box-shadow: 0 4px 8px rgba(128,0,0,0.3);
+        }
+
+    /* Generic Hover Effects */
+    .btn-hover-effect:hover {
+        transform: translateY(-1px);
+    }
+
+    .module-card {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+    }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            background-color: #f8f9fa;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+
+    .emoji-fix {
+        font-style: normal !important;
+        display: inline-block;
+        transform: rotate(0deg) !important;
+    }
+
+    .icon-box {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            loadCompanies();
+            checkCookie();
+        });
+
+        function loadCompanies() {
+            $.get('/Home/GetCompanies', function (res) {
+                let options = '<option value="">-- Choose Company --</option>';
+                var data = res.data ? res.data : res;
+                data.forEach(c => {
+                    options += `<option value="${c.comId}">${c.comName}</option>`;
+                });
+                $('#comId').html(options);
+                const savedId = getCookie("SelectedCompany");
+                if(savedId) $('#comId').val(savedId);
+            });
+        }
+
+        function setCompany() {
+            const id = $('#comId').val();
+            if (!id) {
+                alert("Please select a company!");
+                return;
+            }
+            document.cookie = "SelectedCompany=" + id + ";path=/;max-age=" + (24*60*60);
+            location.reload();
+        }
+
+        function checkCookie() {
+            const selectedCompany = getCookie("SelectedCompany");
+            if (selectedCompany && selectedCompany !== "") {
+                $('#moduleSection').fadeIn();
+                $('#noCompanyMessage').hide();
+            } else {
+                $('#moduleSection').hide();
+                $('#noCompanyMessage').show();
+            }
+        }
+
+        function getCookie(name) {
+            let value = "; " + document.cookie;
+            let parts = value.split("; " + name + "=");
+            if (parts.length == 2) return parts.pop().split(";").shift();
+        }
+    </script>
+}
+
+

@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Designation Setup";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between">
+            <h4>Designation List</h4>
+            <button class="btn btn-light btn-sm" onclick="resetForm()" data-bs-toggle="modal" data-bs-target="#desigModal">Add New</button>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered" id="desigTable">
+                <thead>
+                    <tr>
+                        <th>Designation Name</th>
+                        <th style="width:150px">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="desigTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="desigModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Add Designation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="desigForm">
+                    <input type="hidden" id="desigId" />
+                    <div class="mb-3">
+                        <label class="form-label">Designation Name</label>
+                        <input type="text" id="desigName" class="form-control" placeholder="e.g. Software Engineer" required />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="saveDesignation()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/designation.js"></script>
+}

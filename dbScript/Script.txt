@@ -1,0 +1,202 @@
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- ১. Company Table
+CREATE TABLE "Company" (
+    "ComId" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "ComName" VARCHAR(255) NOT NULL,
+    "Basic" DECIMAL(18,4) NOT NULL,
+    "Hrent" DECIMAL(18,4) NOT NULL,
+    "Medical" DECIMAL(18,4) NOT NULL,
+    "IsInactive" BOOLEAN DEFAULT FALSE
+);
+
+-- ২. Designation Table
+CREATE TABLE "Designation" (
+    "DesigId" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "ComId" UUID REFERENCES "Company"("ComId"),
+    "DesigName" VARCHAR(100) NOT NULL
+);
+
+-- ৩. Department Table
+CREATE TABLE "Department" (
+    "DeptId" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "ComId" UUID REFERENCES "Company"("ComId"),
+    "DeptName" VARCHAR(100) NOT NULL
+);
+
+-- ৪. Shift Table
+CREATE TABLE "Shift" (
+    "Shifid" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "ComId" UUID REFERENCES "Company"("ComId"),
+    "ShiftName" VARCHAR(100) NOT NULL,
+    "InTime" TIME NOT NULL,
+    "OutTime" TIME NOT NULL,
+    "LateTime" TIME NOT NULL
+);
+
+-- . Employee Table
+CREATE TABLE "Employee" (
+    "EmpId" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "ComId" UUID REFERENCES "Company"("ComId"),
+    "EmpCode" VARCHAR(50) UNIQUE NOT NULL,
+    "EmpName" VARCHAR(255) NOT NULL,
+    "ShiftId" UUID REFERENCES "Shift"("Shifid"),
+    "DeptId" UUID REFERENCES "Department"("DeptId"),
+    "DesigId" UUID REFERENCES "Designation"("DesigId"),
+    "Gender" VARCHAR(20),
+    "Gross" DECIMAL(18,2),
+    "Basic" DECIMAL(18,2),
+    "HRent" DECIMAL(18,2),
+    "Medical" DECIMAL(18,2),
+    "Others" DECIMAL(18,2),
+    "dtJoin" DATE
+);
+
+-- 6. Attendance Table
+CREATE TABLE "Attendance" (
+    "Id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "ComId" UUID REFERENCES "Company"("ComId"),
+    "EmpId" UUID REFERENCES "Employee"("EmpId"),
+    "dtDate" DATE NOT NULL,
+    "AttStatus" VARCHAR(5),
+    "InTime" TIME,
+    "OutTime" TIME
+);
+
+-- 7. AttendanceSummary Table
+CREATE TABLE "AttendanceSummary" (
+    "Id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "EmpId" UUID REFERENCES "Employee"("EmpId"),
+    "ComId" UUID REFERENCES "Company"("ComId"),
+    "dtYear" INT NOT NULL,
+    "dtMonth" INT NOT NULL,
+    "Present" INT DEFAULT 0,
+    "Late" INT DEFAULT 0,
+    "Absent" INT DEFAULT 0
+);
+
+-- 8. Salary Table
+CREATE TABLE "Salary" (
+    "Id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "ComId" UUID REFERENCES "Company"("ComId"),
+    "EmpId" UUID REFERENCES "Employee"("EmpId"),
+    "dtYear" INT NOT NULL,
+    "dtMonth" INT NOT NULL,
+    "Gross" DECIMAL(18,2),
+    "Basic" DECIMAL(18,2),
+    "Hrent" DECIMAL(18,2),
+    "Medical" DECIMAL(18,2),
+    "AbsentAmount" DECIMAL(18,2),
+    "PayableAmount" DECIMAL(18,2),
+    "IsPaid" BOOLEAN DEFAULT FALSE,
+    "PaidAmount" DECIMAL(18,2) DEFAULT 0
+);
+
+-- Data inserting into Company Table
+INSERT INTO Company (ComName, Basic, Hrent, Medical, IsInactive)
+VALUES 
+('ABC Company', 0.5, 0.3, 0.15, FALSE),
+('XYZ Corp', 0.6, 0.25, 0.15, FALSE),
+('Global IT', 0.55, 0.3, 0.15, FALSE);
+
+
+--ALTER TABLE "Employee" ALTER COLUMN "dtJoin" TYPE timestamp without time zone;
+--ALTER TABLE "Employee" ALTER COLUMN "ShiftId" DROP NOT NULL;
+
+
+-- Proc GenerateAttendanceSummary
+
+CREATE OR REPLACE PROCEDURE "sp_GenerateAttendanceSummary"(
+    p_ComId UUID,
+    p_Year INT,
+    p_Month INT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- ১. আগের ডাটা মুছে ফেলা (যাতে ডুপ্লিকেট না হয়)
+    DELETE FROM "AttendanceSummary" 
+    WHERE "ComId" = p_ComId AND "dtYear" = p_Year AND "dtMonth" = p_Month;
+
+    -- ২. নতুন সামারি ইনসার্ট করা
+    INSERT INTO "AttendanceSummary" ("Id", "EmpId", "ComId", "dtYear", "dtMonth", "Present", "Late", "Absent")
+    SELECT 
+        gen_random_uuid(),
+        e."EmpId",
+        p_ComId,
+        p_Year,
+        p_Month,
+        COUNT(CASE WHEN a."AttStatus" = 'P' THEN 1 END) as Present,
+        COUNT(CASE WHEN a."AttStatus" = 'L' THEN 1 END) as Late,
+        COUNT(CASE WHEN a."AttStatus" = 'A' THEN 1 END) as Absent
+    FROM "Employee" e
+    LEFT JOIN "Attendance" a ON e."EmpId" = a."EmpId" 
+        AND EXTRACT(YEAR FROM a."dtDate") = p_Year 
+        AND EXTRACT(MONTH FROM a."dtDate") = p_Month
+    WHERE e."ComId" = p_ComId
+    GROUP BY e."EmpId";
+
+    COMMIT;
+END;
+$$;
+
+
+
+-- Proc CalculateSalary
+
+CREATE OR REPLACE PROCEDURE "sp_CalculateSalary"(
+    p_ComId UUID,
+    p_Year INT,
+    p_Month INT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- ১. ওই মাসের স্যালারি আগে জেনারেট করা থাকলে তা মুছে ফেলা
+    DELETE FROM "Salary" 
+    WHERE "ComId" = p_ComId AND "dtYear" = p_Year AND "dtMonth" = p_Month;
+
+    -- ২. স্যালারি ক্যালকুলেশন করে ইনসার্ট করা
+    INSERT INTO "Salary" (
+        "Id", "ComId", "EmpId", "dtYear", "dtMonth", 
+        "Gross", "Basic", "Hrent", "Medical", 
+        "AbsentAmount", "PayableAmount", "IsPaid", "PaidAmount"
+    )
+    SELECT 
+        gen_random_uuid(),
+        p_ComId,
+        e."EmpId",
+        p_Year,
+        p_Month,
+        e."Gross",
+        e."Basic",
+        e."HRent",
+        e."Medical",
+        -- লজিক: (Basic / 30) * Absent Days
+        ROUND((e."Basic" / 30) * s."Absent", 2) as AbsentAmount,
+        -- লজিক: Gross - AbsentAmount
+        ROUND(e."Gross" - ((e."Basic" / 30) * s."Absent"), 2) as PayableAmount,
+        FALSE, -- IsPaid ডিফল্ট False
+        0      -- PaidAmount ডিফল্ট ০
+    FROM "Employee" e
+    INNER JOIN "AttendanceSummary" s ON e."EmpId" = s."EmpId"
+    WHERE e."ComId" = p_ComId 
+        AND s."dtYear" = p_Year 
+        AND s."dtMonth" = p_Month;
+
+    COMMIT;
+END;
+$$;
+
+
+
+
+
+
+
+
+
+
+
+-- ১. Shift টেবিলের প্রাইমারি কী কলামের নাম পরিবর্তন
+ALTER TABLE "Shift" RENAME COLUMN "Shifid" TO "ShiftId";
