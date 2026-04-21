@@ -59,7 +59,8 @@ For your convenience, a complete database script has been included in the projec
 ---
 
 ## 👨‍💻 Author
-**A. N. Shuvo** *.NET Developer*
+**A. N. Shuvo** 
+*.NET Developer*
 
 ---
 
