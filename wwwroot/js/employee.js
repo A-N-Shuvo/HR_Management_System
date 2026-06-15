@@ -1,10 +1,12 @@
 ﻿$(document).ready(function () {
-    loadEmployees();
-    loadFormResources();
+    // ১. প্রথমে ড্রপডাউন রিসোর্স লোড করব, তারপর এমপ্লয়ি লিস্ট লোড করব
+    loadFormResources(function() {
+        loadEmployees();
+    });
 });
 
-// ড্রপডাউন লোড করা (Dept, Desig, Shift)
-function loadFormResources() {
+// ড্রপডাউন লোড করা (Callback ফাংশন যুক্ত করা হয়েছে)
+function loadFormResources(callback) {
     $.get('/Employee/GetFormResources', function (res) {
         let deptHtml = '<option value="">-- Select Dept --</option>';
         let desigHtml = '<option value="">-- Select Desig --</option>';
@@ -16,11 +18,16 @@ function loadFormResources() {
 
         $('#deptId').html(deptHtml);
         $('#desigId').html(desigHtml);
-        $('#shiftId').html(shiftHtml); // নিশ্চিত করুন HTML এ shiftId নামে select আছে
+        $('#shiftId').html(shiftHtml); 
+
+        // ড্রপডাউন এইচটিএমএল তৈরি শেষ হলে এই কলব্যাক রান করবে
+        if (typeof callback === "function") {
+            callback();
+        }
     });
 }
 
-// এমপ্লয়ি লিস্ট লোড
+// এমপ্লয়ি লিস্ট লোড
 function loadEmployees() {
     $.get('/Employee/GetAll', function (res) {
         let rows = '';
@@ -28,7 +35,9 @@ function loadEmployees() {
             rows += `<tr>
                 <td>${item.empCode}</td>
                 <td>${item.empName}</td>
-                <td>${item.deptName}</td>  <td>${item.desigName}</td> <td>${item.gross.toFixed(2)}</td>
+                <td>${item.deptName}</td>  
+                <td>${item.desigName}</td> 
+                <td>${item.gross.toFixed(2)}</td>
                 <td>${item.dtJoin ? new Date(item.dtJoin).toLocaleDateString() : 'N/A'}</td>
                 <td>
                     <button class="btn btn-sm btn-info" onclick="editEmp('${item.empId}')">Edit</button>
@@ -40,22 +49,35 @@ function loadEmployees() {
     });
 }
 
-// এডিট ফাংশন
+// এডিট ফাংশন (টাইমিং ফিক্সড)
+// এডিট ফাংশন (টাইমিং এবং রেস কন্ডিশন ফিক্সড, ড্রপডাউন লোডের পরে ড্রপডাউন ভ্যালু সেট করার জন্য ইভেন্ট হ্যান্ডলার যুক্ত করা হয়েছে)
 function editEmp(id) {
     $.get('/Employee/GetAll', function (res) {
         const emp = res.data.find(e => e.empId === id);
         if (emp) {
+            // ১. প্রথমে সাধারণ টেক্সট এবং নম্বর ফিল্ডগুলোর ভ্যালু সেট করুন
             $('#empId').val(emp.empId);
             $('#empCode').val(emp.empCode);
             $('#empName').val(emp.empName);
-            $('#deptId').val(emp.deptId); // সিলেক্ট বক্সে ভ্যালু সেট হবে
-            $('#desigId').val(emp.desigId);
             $('#gross').val(emp.gross);
-            // ডেট ফরম্যাট ফিক্স (YYYY-MM-DD)
+            
             if (emp.dtJoin) {
                 $('#dtJoin').val(new Date(emp.dtJoin).toISOString().split('T')[0]);
             }
+
+            // ২. এবার মোডালটি ওপেন করার নির্দেশ দিন
             $('#empModal').modal('show');
+
+            // ৩. [ম্যাজিক পার্ট] মোডালটি স্ক্রিনে পুরোপুরি লোড হওয়া পর্যন্ত অপেক্ষা করুন, 
+            // তারপর ড্রপডাউনের পূর্বের ভ্যালুগুলো সিলেক্ট করে দিন।
+            $('#empModal').one('shown.bs.modal', function () {
+                // .one() ব্যবহার করায় এই ইভেন্টটি শুধু এডিট বাটনে ক্লিক করলেই একবার ট্রিগার হবে
+                $('#deptId').val(emp.deptId).change(); 
+                $('#desigId').val(emp.desigId).change();
+                if(emp.shiftId) {
+                    $('#shiftId').val(emp.shiftId).change();
+                }
+            });
         }
     });
 }
@@ -78,7 +100,7 @@ function deleteEmp(id) {
     }
 }
 
-// এমপ্লয়ি সেভ করা
+// এমপ্লয়ি সেভ করা
 function saveEmployee() {
     const payload = {
         empId: $('#empId').val() || "00000000-0000-0000-0000-000000000000",
@@ -86,7 +108,7 @@ function saveEmployee() {
         empName: $('#empName').val(),
         deptId: $('#deptId').val(),
         desigId: $('#desigId').val(),
-        shiftId: $('#shiftId').val() || null, // ShiftId যুক্ত করা হয়েছে
+        shiftId: $('#shiftId').val() || null,
         gender: $('#gender').val(),
         gross: parseFloat($('#gross').val()) || 0,
         dtJoin: $('#dtJoin').val()

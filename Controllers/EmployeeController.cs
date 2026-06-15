@@ -34,12 +34,25 @@ namespace HR_Management_System.Controllers
             var depts = await _unitOfWork.Repository<Department>().GetAllAsync();
             var desigs = await _unitOfWork.Repository<Designation>().GetAllAsync();
 
+            // var result = employees.Where(x => x.ComId == comIdGuid).Select(emp => new
+            // {
+            //     empId = emp.EmpId,
+            //     empCode = emp.EmpCode,
+            //     empName = emp.EmpName,
+            //     deptName = depts.FirstOrDefault(d => d.DeptId == emp.DeptId)?.DeptName ?? "N/A",
+            //     desigName = desigs.FirstOrDefault(d => d.DesigId == emp.DesigId)?.DesigName ?? "N/A",
+            //     gross = emp.Gross,
+            //     dtJoin = emp.dtJoin
+            // }).ToList();
+
             var result = employees.Where(x => x.ComId == comIdGuid).Select(emp => new
             {
                 empId = emp.EmpId,
                 empCode = emp.EmpCode,
                 empName = emp.EmpName,
+                deptId = emp.DeptId, // <--- এই লাইনটি যুক্ত করুন
                 deptName = depts.FirstOrDefault(d => d.DeptId == emp.DeptId)?.DeptName ?? "N/A",
+                desigId = emp.DesigId, // <--- এই লাইনটি যুক্ত করুন
                 desigName = desigs.FirstOrDefault(d => d.DesigId == emp.DesigId)?.DesigName ?? "N/A",
                 gross = emp.Gross,
                 dtJoin = emp.dtJoin
