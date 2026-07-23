@@ -15,6 +15,7 @@ namespace HR_Management_System.Repositories
         // ১. Employee রিপোজিটরির জন্য প্রপার্টি
         public IEmployeeRepository Employee { get; private set; }
 
+
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
@@ -24,6 +25,8 @@ namespace HR_Management_System.Repositories
             Employee = new EmployeeRepository(_context);
         }
 
+
+        // ৩. জেনেরিক রিপোজিটরি মেথড
         public IGenericRepository<T> Repository<T>() where T : class
         {
             if (_repositories == null) _repositories = new Hashtable();
@@ -39,6 +42,7 @@ namespace HR_Management_System.Repositories
 
             return (IGenericRepository<T>)_repositories[type];
         }
+
 
         public async Task ExecuteRawSqlAsync(string query)
         {

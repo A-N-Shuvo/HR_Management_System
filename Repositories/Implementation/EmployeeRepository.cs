@@ -15,6 +15,8 @@ namespace HR_Management_System.Repositories.Implementation
             _context = context;
         }
 
+        
+        // Employee রিপোর্টের জন্য মেথড
         public async Task<List<EmployeeReportVM>> GetEmployeeListForReport(Guid comId, Guid? deptId)
         {
             var query = from emp in _context.Employee
@@ -45,6 +47,8 @@ namespace HR_Management_System.Repositories.Implementation
             return await query.ToListAsync();
         }
 
+
+        // Attendance রিপোর্টের জন্য মেথড
         public async Task<List<AttendanceReportVM>> GetAttendanceListForReport(Guid comId, Guid? deptId, DateTime fromDate, DateTime toDate)
         {
             var query = from emp in _context.Employee
@@ -61,6 +65,8 @@ namespace HR_Management_System.Repositories.Implementation
             return await query.ToListAsync();
         }
 
+
+        // Salary রিপোর্টের জন্য মেথড
         public async Task<List<SalaryReportVM>> GetSalaryListForReport(Guid comId, int month, int year, Guid? deptId)
         {
             var query = from sal in _context.Salary
