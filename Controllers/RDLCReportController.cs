@@ -219,5 +219,22 @@ namespace HR_Management_System.Controllers
 
             return File(pdfBytes, "application/pdf", $"SalarySummary_RDLC_{deptName}_{month}.pdf");
         }
+
+        public async Task<IActionResult> DepartmentWiseEmployeeChart()
+        {
+            var data = await _context.Employee
+                .GroupBy(e => e.Department.DeptName)
+                .Select(g => new DepartmentEmployeeSummaryDto
+                {
+                    DepartmentName = g.Key ?? "Unassigned",
+                    TotalEmployees = g.Count()
+                }).ToListAsync();
+
+            string reportPath = Path.Combine(_env.WebRootPath, "Reports", "DepartmentWiseEmployeeReport.rdlc");
+
+            byte[] pdfBytes = RdlcReportHelper.RenderReport(reportPath, "dsDepartmentWiseEmployee", data, "PDF");
+
+            return File(pdfBytes, "application/pdf");
+        }
     }
 }
