@@ -114,11 +114,9 @@ CREATE OR REPLACE PROCEDURE "sp_GenerateAttendanceSummary"(
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    -- ১. আগের ডাটা মুছে ফেলা (যাতে ডুপ্লিকেট না হয়)
     DELETE FROM "AttendanceSummary" 
     WHERE "ComId" = p_ComId AND "dtYear" = p_Year AND "dtMonth" = p_Month;
 
-    -- ২. নতুন সামারি ইনসার্ট করা
     INSERT INTO "AttendanceSummary" ("Id", "EmpId", "ComId", "dtYear", "dtMonth", "Present", "Late", "Absent")
     SELECT 
         gen_random_uuid(),
@@ -135,8 +133,6 @@ BEGIN
         AND EXTRACT(MONTH FROM a."dtDate") = p_Month
     WHERE e."ComId" = p_ComId
     GROUP BY e."EmpId";
-
-    COMMIT;
 END;
 $$;
 

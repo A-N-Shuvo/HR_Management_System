@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report MustUnderstand="df" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily">
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>c3d4e5f6-a7b8-9012-cdef-123456789012</rd:ReportID>
+  <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="SalarySummaryDataSet">
+      <ConnectionProperties><DataProvider>SQL</DataProvider><ConnectString /></ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="SalarySummaryDataSet">
+      <Query><DataSourceName>SalarySummaryDataSet</DataSourceName><CommandText /></Query>
+      <Fields>
+        <Field Name="EmpName"><DataField>EmpName</DataField><rd:TypeName>System.String</rd:TypeName></Field>
+        <Field Name="Gross"><DataField>Gross</DataField><rd:TypeName>System.Decimal</rd:TypeName></Field>
+        <Field Name="AbsentAmount"><DataField>AbsentAmount</DataField><rd:TypeName>System.Decimal</rd:TypeName></Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportParameters>
+    <ReportParameter Name="Month"><DataType>String</DataType><Prompt>Month</Prompt><AllowBlank>true</AllowBlank><Nullable>true</Nullable></ReportParameter>
+    <ReportParameter Name="Year"><DataType>String</DataType><Prompt>Year</Prompt><AllowBlank>true</AllowBlank><Nullable>true</Nullable></ReportParameter>
+    <ReportParameter Name="Department"><DataType>String</DataType><Prompt>Department</Prompt><AllowBlank>true</AllowBlank><Nullable>true</Nullable></ReportParameter>
+    <ReportParameter Name="FromDate"><DataType>String</DataType><Prompt>From Date</Prompt><AllowBlank>true</AllowBlank><Nullable>true</Nullable></ReportParameter>
+    <ReportParameter Name="ToDate"><DataType>String</DataType><Prompt>To Date</Prompt><AllowBlank>true</AllowBlank><Nullable>true</Nullable></ReportParameter>
+  </ReportParameters>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Textbox Name="ReportTitle">
+            <CanGrow>true</CanGrow><KeepTogether>true</KeepTogether>
+            <Paragraphs><Paragraph><TextRuns><TextRun><Value>Salary Summary Report</Value><Style><FontFamily>Segoe UI Light</FontFamily><FontSize>22pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs>
+            <Height>0.5in</Height><Width>5in</Width>
+            <Style><Border><Style>None</Style></Border><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style>
+          </Textbox>
+          <Textbox Name="ReportSubtitle">
+            <CanGrow>true</CanGrow><KeepTogether>true</KeepTogether>
+            <Paragraphs><Paragraph><TextRuns><TextRun><Value>=Parameters!Month.Value &amp; " " &amp; Parameters!Year.Value &amp; IIF(Parameters!Department.Value &lt;&gt; "", " - " &amp; Parameters!Department.Value, "")</Value><Style><FontFamily>Segoe UI</FontFamily><FontSize>12pt</FontSize></Style></TextRun></TextRuns><Style><TextAlign>Center</TextAlign></Style></Paragraph></Paragraphs>
+            <Top>0.5in</Top><Left>0.2in</Left><Height>0.3in</Height><Width>5.5in</Width>
+            <Style><Border><Style>None</Style></Border></Style>
+          </Textbox>
+          <Tablix Name="Tablix1">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn><Width>2.5in</Width></TablixColumn>
+                <TablixColumn><Width>1.5in</Width></TablixColumn>
+                <TablixColumn><Width>1.5in</Width></TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow><Height>0.3in</Height><TablixCells>
+                  <TablixCell><CellContents><Textbox Name="h1"><CanGrow>true</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>Employee Name</Value><Style><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight></Style></Textbox></CellContents></TablixCell>
+                  <TablixCell><CellContents><Textbox Name="h2"><CanGrow>true</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>Total Salary</Value><Style><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight></Style></Textbox></CellContents></TablixCell>
+                  <TablixCell><CellContents><Textbox Name="h3"><CanGrow>true</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>Total Absent Amt</Value><Style><FontSize>11pt</FontSize><FontWeight>Bold</FontWeight></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight></Style></Textbox></CellContents></TablixCell>
+                </TablixCells></TablixRow>
+                <TablixRow><Height>0.25in</Height><TablixCells>
+                  <TablixCell><CellContents><Textbox Name="d1"><CanGrow>true</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!EmpName.Value</Value></TextRun></TextRuns></Paragraph></Paragraphs><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight></Style></Textbox></CellContents></TablixCell>
+                  <TablixCell><CellContents><Textbox Name="d2"><CanGrow>true</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!Gross.Value</Value><Style><Format>N2</Format></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight></Style></Textbox></CellContents></TablixCell>
+                  <TablixCell><CellContents><Textbox Name="d3"><CanGrow>true</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!AbsentAmount.Value</Value><Style><Format>N2</Format></Style></TextRun></TextRuns></Paragraph></Paragraphs><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight></Style></Textbox></CellContents></TablixCell>
+                </TablixCells></TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy><TablixMembers><TablixMember /><TablixMember /><TablixMember /></TablixMembers></TablixColumnHierarchy>
+            <TablixRowHierarchy><TablixMembers><TablixMember><KeepWithGroup>After</KeepWithGroup></TablixMember><TablixMember><Group Name="Details" /></TablixMember></TablixMembers></TablixRowHierarchy>
+            <DataSetName>SalarySummaryDataSet</DataSetName>
+            <Top>0.9in</Top><Left>0.2in</Left><Height>0.55in</Height><Width>5.5in</Width>
+            <Style><Border><Style>None</Style></Border></Style>
+          </Tablix>
+        </ReportItems>
+        <Height>2.25in</Height>
+        <Style><Border><Style>None</Style></Border></Style>
+      </Body>
+      <Width>6.5in</Width>
+      <Page>
+        <LeftMargin>0.5in</LeftMargin><RightMargin>0.5in</RightMargin><TopMargin>0.5in</TopMargin><BottomMargin>0.5in</BottomMargin>
+        <PageFooter><Height>0.45in</Height><PrintOnFirstPage>true</PrintOnFirstPage><PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems><Textbox Name="ft"><CanGrow>true</CanGrow><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Globals!ExecutionTime</Value></TextRun></TextRuns><Style><TextAlign>Right</TextAlign></Style></Paragraph></Paragraphs><Top>0.15in</Top><Left>4in</Left><Height>0.25in</Height><Width>2in</Width></Textbox></ReportItems>
+        </PageFooter>
+      </Page>
+    </ReportSection>
+  </ReportSections>
+</Report>

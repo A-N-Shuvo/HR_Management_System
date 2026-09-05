@@ -14,6 +14,7 @@ namespace HR_Management_System.Repositories
 
         // ১. Employee রিপোজিটরির জন্য প্রপার্টি
         public IEmployeeRepository Employee { get; private set; }
+        public IAttendanceRepository Attendance { get; private set; }
 
 
         public UnitOfWork(ApplicationDbContext context)
@@ -21,8 +22,9 @@ namespace HR_Management_System.Repositories
             _context = context;
 
             // ২. কাস্টম রিপোজিটরি ইনভোক করা
-            // এটি করলে আপনার কাস্টম মেথডগুলো (যেমন: GetEmployeeListForReport) পাওয়া যাবে
+            // এটি করলে আপনার কাস্টম মেথডগুলো (যেমন: GetEmployeeListForReport) পাওয়া যাবে
             Employee = new EmployeeRepository(_context);
+            Attendance = new AttendanceRepository(_context);
         }
 
 

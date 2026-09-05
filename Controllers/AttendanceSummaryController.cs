@@ -67,9 +67,22 @@ namespace HR_Management_System.Controllers
                 if (string.IsNullOrEmpty(selectedComId))
                     return Json(new { success = false, message = "Please select a company!" });
 
-                // প্রসিডিওর কল করা (PostgreSQL সিনট্যাক্স)
-                string query = $"CALL \"sp_GenerateAttendanceSummary\"('{selectedComId}', {year}, {month})";
-                await _context.Database.ExecuteSqlRawAsync(query);
+                if (!Guid.TryParse(selectedComId, out var comId))
+                    return Json(new { success = false, message = "Invalid company selection!" });
+
+                if (year < 2000 || year > 2100)
+                    return Json(new { success = false, message = "Invalid year!" });
+
+                if (month < 1 || month > 12)
+                    return Json(new { success = false, message = "Invalid month!" });
+
+                var comIdParam = new Npgsql.NpgsqlParameter("@p_comid", comId);
+                var yearParam = new Npgsql.NpgsqlParameter("@p_year", year);
+                var monthParam = new Npgsql.NpgsqlParameter("@p_month", month);
+
+                await _context.Database.ExecuteSqlRawAsync(
+                    "CALL \"sp_GenerateAttendanceSummary\"(@p_comid, @p_year, @p_month)",
+                    comIdParam, yearParam, monthParam);
 
                 return Json(new { success = true, message = "Attendance Summary Generated Successfully!" });
             }

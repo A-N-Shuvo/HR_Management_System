@@ -62,13 +62,14 @@
                         </li>
 
 
-                        @* <li class="nav-item">
-                            <a class="nav-link" asp-controller="Report" asp-action="Index">Advanced Reports Portal</a>
-                        </li> *@
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Report" asp-action="Index">
-                                <i class="fas fa-file-invoice"></i>Reports
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="reportsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-file-invoice"></i> Reports
                             </a>
+                            <ul class="dropdown-menu" aria-labelledby="reportsDropdown">
+                                <li><a class="dropdown-item" asp-controller="Report" asp-action="Index">QuestPDF Reports</a></li>
+                                <li><a class="dropdown-item" asp-controller="RDLCReport" asp-action="Index">RDLC Reports</a></li>
+                            </ul>
                         </li>
 
 

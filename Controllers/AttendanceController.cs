@@ -1,16 +1,19 @@
 ﻿using HR_Management_System.Interfaces;
 using HR_Management_System.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Reporting.NETCore;
+
 
 namespace HR_Management_System.Controllers
 {
     public class AttendanceController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-
-        public AttendanceController(IUnitOfWork unitOfWork)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public AttendanceController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -88,5 +91,35 @@ namespace HR_Management_System.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> DownloadAttendanceSummary(DateTime monthYear)
+        {
+            var selectedComId = Guid.Parse(Request.Cookies["SelectedCompany"]);
+
+            var fromDate = new DateTime(monthYear.Year, monthYear.Month, 1);
+            var toDate = fromDate.AddMonths(1).AddDays(-1);
+
+            var attendanceData = await _unitOfWork.Attendance.GetAttendanceSummaryAsync(selectedComId, fromDate, toDate);
+
+            string reportPath = Path.Combine(_webHostEnvironment.WebRootPath, "Reports", "AttendanceReport.rdlc.rdl");
+
+            if (!System.IO.File.Exists(reportPath))
+            {
+                return NotFound("RDLC Report File Not Found!"); 
+            }
+
+            LocalReport localReport = new LocalReport();
+            localReport.ReportPath = reportPath;
+
+            // ৩. Report Builder-এর Dataset Name-এর সাথে ম্যাচ করে ডাটা পাঠানো
+            localReport.DataSources.Add(new ReportDataSource("AttendanceDataSet", attendanceData));
+
+            // ৪. PDF জেনারেট করা
+            byte[] pdfBytes = localReport.Render("PDF");
+
+            // ৫. ফাইল রেসপন্স দেওয়া
+            return File(pdfBytes, "application/pdf", $"Attendance_Summary_{monthYear:MMM_yyyy}.pdf");
+        }
+
     }
 }

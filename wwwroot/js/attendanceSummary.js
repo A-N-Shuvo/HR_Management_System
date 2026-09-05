@@ -1,5 +1,4 @@
 ﻿$(document).ready(function () {
-    // বর্তমান বছর এবং মাস ডিফল্ট সেট করা
     const now = new Date();
     $('#dtYear').val(now.getFullYear());
     $('#dtMonth').val(now.getMonth() + 1);
@@ -8,6 +7,11 @@
 function loadSummary() {
     const year = $('#dtYear').val();
     const month = $('#dtMonth').val();
+
+    if (!year || !month) {
+        alert("Please select Year and Month");
+        return;
+    }
 
     $.get(`/AttendanceSummary/GetSummary?year=${year}&month=${month}`, function (res) {
         let rows = '';
@@ -25,6 +29,9 @@ function loadSummary() {
             rows = '<tr><td colspan="6" class="text-center text-danger">No summary data found!</td></tr>';
         }
         $('#summaryTableBody').html(rows);
+    }).fail(function (xhr) {
+        var msg = xhr.responseJSON?.message || "Failed to load summary.";
+        alert("Error: " + msg);
     });
 }
 
@@ -37,12 +44,23 @@ function processSummary() {
         return;
     }
 
-    $.post(`/AttendanceSummary/GenerateSummary?year=${year}&month=${month}`, function (res) {
-        if (res.success) {
-            alert(res.message);
-            loadSummary();
-        } else {
-            alert("Error: " + res.message);
+    if (!confirm("Generate attendance summary for " + year + "-" + month + "?")) return;
+
+    $.ajax({
+        url: '/AttendanceSummary/GenerateSummary',
+        type: 'POST',
+        data: { year: year, month: month },
+        success: function (res) {
+            if (res.success) {
+                alert(res.message);
+                loadSummary();
+            } else {
+                alert("Error: " + res.message);
+            }
+        },
+        error: function (xhr) {
+            var msg = xhr.responseJSON?.message || "Server error occurred.";
+            alert("Error: " + msg);
         }
     });
 }

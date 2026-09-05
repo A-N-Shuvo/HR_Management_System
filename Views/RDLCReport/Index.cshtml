@@ -1,20 +1,24 @@
-﻿@{
-    ViewData["Title"] = "Advanced Reports Portal";
+@{
+    ViewData["Title"] = "RDLC Reports Portal";
 }
 
 <div class="container mt-4">
     <div class="card shadow">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h3 class="card-title mb-0"><i class="fas fa-file-pdf"></i>Reports Portal (Quest PDF)</h3>
-            <a asp-controller="RDLCReport" asp-action="Index" class="btn btn-outline-light btn-sm">
-                <i class="fas fa-exchange-alt"></i> Switch to RDLC Report
+        <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+            <h3 class="card-title mb-0"><i class="fas fa-file-pdf"></i>Reports Portal (RDLC)</h3>
+            @* <a href="/Report/Index" class="btn btn-light btn-sm">Switch to QuestPDF Reports</a> *@
+
+            <a asp-controller="Report" asp-action="Index" class="btn btn-outline-light btn-sm">
+                <i class="fas fa-exchange-alt"></i> Switch to QuestPDF Reports
             </a>
+
+
         </div>
         <div class="card-body">
-            
+
             <div class="row border-bottom pb-4 mb-4">
                 <div class="col-md-6">
-                    <h5 class="text-primary"><i class="fas fa-users"></i> 1. Employee List Report</h5>
+                    <h5 class="text-danger"><i class="fas fa-users"></i> 1. Employee List Report</h5>
                     <div class="row">
                         <div class="col-md-8">
                             <label class="small text-muted">Select Department</label>
@@ -38,7 +42,7 @@
                 </div>
 
                 <div class="col-md-6 border-left">
-                    <h5 class="text-primary"><i class="fas fa-calendar-check"></i> 2. Attendance List Report</h5>
+                    <h5 class="text-danger"><i class="fas fa-calendar-check"></i> 2. Attendance List Report</h5>
                     <div class="row">
                         <div class="col-md-12 mb-2">
                             <select id="attnDept" class="form-control">
@@ -70,7 +74,7 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    <h5 class="text-primary"><i class="fas fa-file-invoice-dollar"></i> 3. Detailed Salary List</h5>
+                    <h5 class="text-danger"><i class="fas fa-file-invoice-dollar"></i> 3. Detailed Salary List</h5>
                     <div class="row">
                         <div class="col-md-8">
                             <select id="salDeptId" class="form-control mb-2">
@@ -88,7 +92,6 @@
                                 @for (int i = 1; i <= 12; i++)
                                 {
                                     var isSelected = (i == DateTime.Now.Month);
-                                    // সংশোধিত কন্ডিশনাল অ্যাট্রিবিউট
                                     <option value="@i" selected="@(isSelected ? "selected" : null)">
                                         @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)
                                     </option>
@@ -103,9 +106,8 @@
                     </div>
                 </div>
 
-
                 <div class="col-md-6 border-left">
-                    <h5 class="text-primary"><i class="fas fa-chart-pie"></i> 4. Salary Summary Report</h5>
+                    <h5 class="text-danger"><i class="fas fa-chart-pie"></i> 4. Salary Summary Report</h5>
                     <div class="row">
                         <div class="col-md-8">
                             <select id="summaryDeptId" class="form-control mb-2">
@@ -136,7 +138,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <div id="attnPreviewSection" class="mt-4" style="display:none;">
@@ -161,7 +162,7 @@
     <script>
         function printEmployeeList() {
             var deptId = $('#employeeDept').val();
-            window.open(`/Report/PrintEmployeeList?deptId=${deptId}`, '_blank');
+            window.open(`/RDLCReport/PrintEmployeeList?deptId=${deptId}`, '_blank');
         }
 
         function loadAttendanceList() {
@@ -170,14 +171,14 @@
             var toDate = $('#attnToDate').val();
             if(!fromDate || !toDate) { alert("Please select date range!"); return; }
 
-            $.get(`/Report/GetAttendanceData?deptId=${deptId}&fromDate=${fromDate}&toDate=${toDate}`, function(res) {
+            $.get(`/RDLCReport/GetAttendanceData?deptId=${deptId}&fromDate=${fromDate}&toDate=${toDate}`, function(res) {
                 var rows = '';
                 $.each(res.data, function(i, item) {
                     rows += `<tr>
-                        <td>${item.empName}</td>
-                        <td class="text-center"><span class="badge badge-success">${item.totalPresent}</span></td>
-                        <td class="text-center"><span class="badge badge-danger">${item.totalAbsent}</span></td>
-                        <td class="text-center"><span class="badge badge-warning text-dark">${item.totalLate}</span></td>
+                        <td>${item.employeeName}</td>
+                        <td class="text-center"><span class="badge badge-success">${item.presentDays}</span></td>
+                        <td class="text-center"><span class="badge badge-danger">${item.absentDays}</span></td>
+                        <td class="text-center"><span class="badge badge-warning text-dark">${item.lateDays}</span></td>
                     </tr>`;
                 });
                 $('#attnListBody').html(rows);
@@ -190,28 +191,27 @@
             var from = $('#attnFromDate').val();
             var to = $('#attnToDate').val();
             if(!from || !to) return alert("Select dates");
-            window.open(`/Report/PrintAttendance?deptId=${deptId}&fromDate=${from}&toDate=${to}`, '_blank');
+            window.open(`/RDLCReport/PrintAttendance?deptId=${deptId}&fromDate=${from}&toDate=${to}`, '_blank');
         }
 
         function printSalaryList() {
             var month = $('#salMonth').val();
             var deptId = $('#salDeptId').val();
             var year = new Date().getFullYear();
-            window.open(`/Report/PrintSalaryList?month=${month}&year=${year}&deptId=${deptId}`, '_blank');
+            window.open(`/RDLCReport/PrintSalaryList?month=${month}&year=${year}&deptId=${deptId}`, '_blank');
         }
 
         function printSalarySummary() {
-            // ৪ নম্বর সেকশনের আইডিগুলো ব্যবহার করা হয়েছে
             var month = $('#summaryMonth').val();
             var deptId = $('#summaryDeptId').val();
-            var year = new Date().getFullYear(); // বর্তমান বছর
+            var year = new Date().getFullYear();
 
             if(!month) {
                 alert("Please select a month");
                 return;
             }
 
-            window.open(`/Report/PrintSalarySummary?month=${month}&year=${year}&deptId=${deptId}`, '_blank');
+            window.open(`/RDLCReport/PrintSalarySummary?month=${month}&year=${year}&deptId=${deptId}`, '_blank');
         }
     </script>
 }

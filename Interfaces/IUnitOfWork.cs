@@ -5,6 +5,7 @@ namespace HR_Management_System.Interfaces
     public interface IUnitOfWork : IDisposable
     {
         IEmployeeRepository Employee { get; }
+        IAttendanceRepository Attendance { get; }
 
         IGenericRepository<T> Repository<T>() where T : class;
         Task<int> CompleteAsync();
