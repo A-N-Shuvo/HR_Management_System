@@ -5,6 +5,7 @@ using HR_Management_System.Models;
 using HR_Management_System.Reports;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Reporting.NETCore;
 
 namespace HR_Management_System.Controllers
 {
@@ -222,6 +223,7 @@ namespace HR_Management_System.Controllers
 
         public async Task<IActionResult> DepartmentWiseEmployeeChart()
         {
+            // ১. PostgreSQL/EF Core থেকে ডাটা তুলে আনা
             var data = await _context.Employee
                 .GroupBy(e => e.Department.DeptName)
                 .Select(g => new DepartmentEmployeeSummaryDto
@@ -230,10 +232,13 @@ namespace HR_Management_System.Controllers
                     TotalEmployees = g.Count()
                 }).ToListAsync();
 
+            // ২. RDLC রিপোর্টের সঠিক পাথ সেট করা (_env ব্যবহার করে)
             string reportPath = Path.Combine(_env.WebRootPath, "Reports", "DepartmentWiseEmployeeReport.rdlc");
 
+            // ৩. প্রজেক্টের RdlcReportHelper ব্যবহার করে PDF রেন্ডার করা
             byte[] pdfBytes = RdlcReportHelper.RenderReport(reportPath, "dsDepartmentWiseEmployee", data, "PDF");
 
+            // ৪. PDF ফাইল রেসপন্স হিসেবে রিটার্ন করা
             return File(pdfBytes, "application/pdf");
         }
     }
